@@ -1,0 +1,15 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "A project using firebase",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^10.14.1"
+  }
+}
