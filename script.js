@@ -100,6 +100,61 @@ todoRef.on('value', (snapshot) => {
         if(todoItem.completed) {
             todoTextSpan.classList.add('completed'); //style the text if completed 
         }
-        todoContent.appendChild(todoTextSpan)
-    })
-})
+        todoContent.appendChild(todoTextSpan);
+
+        //Create a edit button
+        const editBtn = document.createElement('i');
+        editBtn.classList.add('far', 'fa-edit', 'edit-btn');
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); //prevents click from toggling completion
+            const editInput = document.createElement('input');
+            editInput.type = 'text';
+            editInput.classList.add('todo-input-edit')
+            editInput.value = todoItem.text;
+            todoContent.replaceChild(editInput, todoTextSpan) // replace text with input field
+            editInput.focus();
+
+            // When editing is complete, 
+            editInput.addEventListener('blur', () => {
+                const updatedText = editInput.value.trim();
+                if(updatedText.length > 0) {
+                    //update the todo text abd date
+                    todoRef.child(todoKey).update({
+                        text: updatedText,
+                        date: new Date().toLocaleDateString(),
+                    }) 
+                } else {
+                        // revert to original text if no valid input
+                        todoContent.replaceChild(todoTextSpan, editInput);
+                }
+            });
+        });
+        //Create a complete button
+        const completeBtn = document.createElement('i');
+        completeBtn.classList.add('far', 'fa-check', 'complete-btn');
+        completeBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); //prevents click from effecting after event listener
+            // toggle completion status of the todo item
+            todoRef.child(todoKey).update({
+                completed: !todoItem.completed,
+            });
+        });
+        //Create an undo btn
+        const undoBtn = document.createElement('i');
+        undoBtn.classList.add('fas', 'fa-undo', 'undo-btn');
+        undoBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); //prevents click from effecting after event listener
+        todoRef.child(todoKey).update({
+            completed: false,
+        });
+    });
+    });
+
+    //Create a delete button
+    const deleteBtn = document.createElement('i');
+    deleteBtn.classList.add('far', 'fa-delete', 'delete-btn');
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation(); //prevents click from effecting after event listener
+        todoRef.child(todoKey).remove();
+    });
+});
