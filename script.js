@@ -52,3 +52,54 @@ todoInput.addEventListener('keypress', (e) => {
 darkToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark')
 })
+
+//Fetch and render TODO from firebase
+todoRef.on('value', (snapshot) => {
+    // Clear the current list to prepare for any content 
+    todoList.innerHTML = '';
+    snapshot.forEach((childSnapshot) => {
+        const todoItem = childSnapshot.val() // retrieve the todo data
+        const todoKey = childSnapshot.key // retrieve the todo key
+        const li = document.createElement('li') // create a new list item from the database
+
+        // create a label to display the category of the todo
+        const categoryLabel = document.createElement('div');
+        categoryLabel.classList.add('category-label');
+        categoryLabel.textContent = todoItem.category;
+        li.appendChild(categoryLabel);
+        
+        const totoContent = document.createElement('div')
+        todoContnet.classList.add('todo-content')
+
+        // create s status icon based on the task state
+        const statusIcon = document.createElement('div')
+        statusIcon.classList.add('status-icon');
+
+        if(todoItem.completed) {
+            statusIcon.classList.add('completed');
+            statusIcon.innerHTML = '<i class="fas fa-check"></i>';
+        } else if(todoItem.priority === 'high') {
+            statusIcon.classList.add('priroity');
+            statusIcon.innerHTML = '<i class="fas fa-exclamation"></i>';
+        } else if(todoItem.priority === 'medium') {
+            statusIcon.classList.add('in-progress');
+            statusIcon.innerHTML = '<i class="fas fa-hourglass-half"></i>';
+        } else if(todoItem.priority === 'low') {
+            statusIcon.classList.add('waiting');
+            statusIcon.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            statusIcon.classList.add('unfinished');
+            statusIcon.innerHTML = '<i class="fas fa-times"></i>'; 
+        }
+        todoContent.appendChild(statusIcon);
+
+        //display the todo list text
+        const todoTextSpan = document.createElement('span');
+        todoTextSpan.textContent = `${todoItem.text} - ${todoItem.date}`;
+
+        if(todoItem.completed) {
+            todoTextSpan.classList.add('completed'); //style the text if completed 
+        }
+        todoContent.appendChild(todoTextSpan)
+    })
+})
